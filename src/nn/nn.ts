@@ -1,4 +1,4 @@
-import { Vector, Matrix, pointwiseMinus, crossProduct, matrixVectorProd, scalarMatrixProd, matrixAddition, randomMatrix } from "./linalg";
+import { Vector, Matrix, randomMatrix } from "./linalg";
 
 export class Net {
 
@@ -6,7 +6,7 @@ export class Net {
 
 
     constructor(sizes: Vector) {
-        for(let i = 1; i < sizes.length; i++) {
+        for(let i = 1; i < sizes.nrows; i++) {
             const prevSize = sizes[i-1];
             const thisSize = sizes[i];
             this.layers.push(new Layer(prevSize, thisSize));
@@ -46,19 +46,20 @@ export class Net {
 
         // 2. Backwards pass
         L = L - 1;
-        dEdY[L] = pointwiseMinus(outputReal, y[L]);
+        y[-1] = input;
+        dEdY[L] = outputReal.min(y[L]);
         for(let l = L; l >= 0; l--) {
             let layer = this.layers[l];
-            dEdX[l] = pointwiseMinus( dEdY[l], layer.gradient(x[l]) );
-            dEdW[l] = crossProduct( dEdX[l], y[l-1] );
-            dEdY[l-1] = matrixVectorProd( layer.weights, dEdX[l] );
+            dEdX[l] = dEdY[l].min( layer.gradient(x[l]) );
+            dEdW[l] = dEdX[l].outerProd( y[l-1] );
+            dEdY[l-1] = dEdX[l].matProd( layer.weights );
         }
 
         // 3. Weight update
         for(let l = 0; l < L; l++) {
             let layer = this.layers[l];
-            let change = scalarMatrixProd( alpha, dEdW[l] );
-            let newWeights = matrixAddition(layer.weights, change);
+            let change = dEdW[l].scalarProd(alpha);
+            let newWeights = layer.weights.add(change);
             layer.weights = newWeights;
         }
     }
@@ -82,16 +83,17 @@ class Layer {
     }
 
     execute(input: Vector): Layeroutput {
-        let xs = matrixVectorProd(this.weights, input);
+        let xs = this.weights.vecProd(input);
         let ys = xs.map(x => this.neuron.execute(x));
         return {
             xs: xs,
-            ys: ys
+            ys: new Vector(ys)
         };
     }
 
     gradient(input: Vector): Vector {
-        return input.map(x => this.neuron.gradient(x));
+        let newVals = input.map(x => this.neuron.gradient(x));
+        return new Vector(newVals);
     }
 }
 

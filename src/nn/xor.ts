@@ -1,4 +1,4 @@
-import { Vector, vectorSum } from "./linalg";
+import { Vector } from "./linalg";
 
 
 export interface Entry {
@@ -20,16 +20,16 @@ export function createDataset(N: number): Entry[] {
 }
 
 function getInput(): Vector {
-    return [
+    return new Vector([
         randInt(0, 1),
         randInt(0, 1)
-    ];
+    ]);
 }
 
 function xor(input: Vector): Vector {
-    let sum = vectorSum(input);
-    if (sum == 2 || sum == 0) return [0];
-    else return [1];
+    let sum = input.sum();
+    if (sum == 2 || sum == 0) return new Vector([0]);
+    else return new Vector([1]);
 }
 
 function randInt(min: number, max: number) {
