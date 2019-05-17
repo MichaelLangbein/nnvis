@@ -11,7 +11,21 @@ export class Matrix extends Array<number[]> {
         Object.setPrototypeOf(this, Object.create(Matrix.prototype));
     }
 
-    private pointwise(other: Matrix, func: (a: number, b: number) => number): Matrix {
+    pointwise(func: (a: number) => number): Matrix {
+        let newData = [];
+        for(let r = 0; r < this.nrows; r++) {
+            let newRow = [];
+            for(let c = 0; c < this.ncols; c++) {
+                newRow.push(
+                    func( this[r][c])
+                );
+            }
+            newData.push(newRow);
+        }
+        return new Matrix(newData);
+    }
+
+    pointwiseWith(other: Matrix, func: (a: number, b: number) => number): Matrix {
         if(other.nrows != this.nrows || other.ncols != this.ncols) throw new Error("different dimensions");
         let newData = [];
         for(let r = 0; r < this.nrows; r++) {
@@ -27,15 +41,15 @@ export class Matrix extends Array<number[]> {
     }
 
     add(other: Matrix): Matrix {
-        return this.pointwise(other, (a, b) => a + b);
+        return this.pointwiseWith(other, (a, b) => a + b);
     }
 
     min(other: Matrix): Matrix {
-        return this.pointwise(other, (a, b) => a - b);
+        return this.pointwiseWith(other, (a, b) => a - b);
     }
 
     mult(other: Matrix): Matrix {
-        return this.pointwise(other, (a, b) => a * b);
+        return this.pointwiseWith(other, (a, b) => a * b);
     }
 
     matProd(other: Matrix): Matrix {
@@ -80,6 +94,16 @@ export class Matrix extends Array<number[]> {
         return new Matrix(newData);
     }
 
+    sum(): number {
+        let sum = 0; 
+        for(let r = 0; r < this.nrows; r++) {
+            for(let c = 0; c < this.ncols; c++) {
+                sum += this[r][c];
+            }
+        }
+        return sum;
+    }
+
 }
 
 export class Vector extends Array<number> {
@@ -87,12 +111,27 @@ export class Vector extends Array<number> {
     readonly nrows: number;
 
     constructor(values: number[]) {
-        super(...values);
+        if(values.length == 1) {
+            super(1); 
+            this[0] = values[0];
+        } else {
+            super(...values);
+        }
         this.nrows = values.length;
         Object.setPrototypeOf(this, Object.create(Vector.prototype));
     }
 
-    private pointwise(other: Vector, func: (a: number, b: number) => number): Vector {
+    pointwise(func: (a: number) => number): Vector {
+        let newData = [];
+        for(let r = 0; r < this.nrows; r++) {
+            newData.push(
+                func( this[r])
+            );
+        }
+        return new Vector(newData);
+    }
+
+    pointwiseWith(other: Vector, func: (a: number, b: number) => number): Vector {
         if(other.nrows != this.nrows) throw new Error("different dimensions");
         let newData = [];
         for(let r = 0; r < this.nrows; r++) {
@@ -104,15 +143,15 @@ export class Vector extends Array<number> {
     }
 
     add(other: Vector): Vector {
-        return this.pointwise(other, (a, b) => a + b);
+        return this.pointwiseWith(other, (a, b) => a + b);
     }
 
     min(other: Vector): Vector {
-        return this.pointwise(other, (a, b) => a - b);
+        return this.pointwiseWith(other, (a, b) => a - b);
     }
 
     mult(other: Vector): Vector {
-        return this.pointwise(other, (a, b) => a * b);
+        return this.pointwiseWith(other, (a, b) => a * b);
     }
 
     innerProd(other: Vector): number {
