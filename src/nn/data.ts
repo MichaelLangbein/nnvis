@@ -31,7 +31,7 @@ function createEntry(): Entry {
 
 
 function inCircle(input: Vector): number {
-    let center = new Vector([0, 0]);
+    let center = new Vector([0.5, 0.5]);
     let offset = center.min(input);
     // let squareDistance = offset.pointwise(v => v*v).sum();
     // let distance = Math.sqrt(squareDistance);

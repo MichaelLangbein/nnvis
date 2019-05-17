@@ -10,8 +10,8 @@ export class Net {
 
     readonly layers: Layer[] = [];
 
-    constructor(sizes: Vector) {
-        for(let i = 1; i < sizes.nrows; i++) {
+    constructor(sizes: number[]) {
+        for(let i = 1; i < sizes.length; i++) {
             const prevSize = sizes[i-1];
             const thisSize = sizes[i];
             this.layers.push(new Layer(prevSize, thisSize));
