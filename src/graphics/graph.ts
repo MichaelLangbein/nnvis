@@ -1,6 +1,16 @@
+import { Renderable } from "./context";
 
 
-export class Grid {
+export class Grid implements Renderable {
+    getId(): string {
+        throw new Error("Method not implemented.");
+    }
+    getBody(): import("three").Mesh {
+        throw new Error("Method not implemented.");
+    }
+    onupdate(deltat: number): void {
+        throw new Error("Method not implemented.");
+    }
 
     graph: Graph;
 
