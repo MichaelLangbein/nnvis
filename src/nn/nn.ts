@@ -1,12 +1,17 @@
 import { Vector, Matrix, randomMatrix } from "./linalg";
 
+
+export interface BackpropOutput {
+    dEdW: Matrix[],
+    prediction: Vector
+}
+
 export class Net {
 
-    private layers: Layer[] = [];
+    readonly layers: Layer[] = [];
 
-
-    constructor(sizes: Vector) {
-        for(let i = 1; i < sizes.nrows; i++) {
+    constructor(sizes: number[]) {
+        for(let i = 1; i < sizes.length; i++) {
             const prevSize = sizes[i-1];
             const thisSize = sizes[i];
             this.layers.push(new Layer(prevSize, thisSize));
@@ -22,12 +27,12 @@ export class Net {
         return intermediate;
     }
 
-    backprop(input: Vector, outputReal: Vector, alpha: number): void {
+    backprop(input: Vector, outputReal: Vector): BackpropOutput {
 
         // 1. Arrays forward pass
         let L = this.layers.length;
-        let x: Vector[] = Array(L).fill([]);
-        let y: Vector[] = Array(L).fill([]);
+        let x: Vector[] = Array(L);
+        let y: Vector[] = Array(L);
 
         // 1. Forward pass
         let intermediate = input;
@@ -40,9 +45,9 @@ export class Net {
         }
 
         // 2. Arrays backward pass
-        let dEdX: Vector[] = Array(L).fill([]);
-        let dEdW: Matrix[] = Array(L).fill([[]]);
-        let dEdY: Vector[] = Array(L).fill([]);
+        let dEdX: Vector[] = Array(L);
+        let dEdW: Matrix[] = Array(L);
+        let dEdY: Vector[] = Array(L);
 
         // 2. Backwards pass
         L = L - 1;
@@ -55,11 +60,16 @@ export class Net {
             dEdY[l-1] = dEdX[l].matProd( layer.weights );
         }
 
-        // 3. Weight update
-        for(let l = 0; l < L; l++) {
+        return {
+            dEdW: dEdW,
+            prediction: y[L]
+        };
+    }
+
+    updateWeights(dEdW: Matrix[]): void {
+        for(let l = 0; l < this.layers.length; l++) {
             let layer = this.layers[l];
-            let change = dEdW[l].scalarProd(alpha);
-            let newWeights = layer.weights.add(change);
+            let newWeights = layer.weights.add(dEdW[l]);
             layer.weights = newWeights;
         }
     }
@@ -84,16 +94,15 @@ class Layer {
 
     execute(input: Vector): Layeroutput {
         let xs = this.weights.vecProd(input);
-        let ys = xs.map(x => this.neuron.execute(x));
+        let ys = xs.pointwise(x => this.neuron.execute(x));
         return {
             xs: xs,
-            ys: new Vector(ys)
+            ys: ys
         };
     }
 
     gradient(input: Vector): Vector {
-        let newVals = input.map(x => this.neuron.gradient(x));
-        return new Vector(newVals);
+        return input.pointwise(x => this.neuron.gradient(x));
     }
 }
 
