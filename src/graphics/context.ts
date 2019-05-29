@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer, PerspectiveCamera, Vector3, AxesHelper, Mesh, BoxGeometry, MeshBasicMaterial, TextureLoader, DoubleSide, Raycaster, Vector2 } from "three";
+import { Scene, Camera, WebGLRenderer, PerspectiveCamera, Vector3, AxesHelper, Mesh, BoxGeometry, MeshBasicMaterial, TextureLoader, DoubleSide, Raycaster, Vector2, Object3D, PointLight } from "three";
 const OrbitControls = require('three-orbitcontrols');
 
 export class Context {
@@ -36,11 +36,15 @@ export class Context {
         this.controls = new OrbitControls( camera );
         this.controls.update();
 
+        // create lightsource
+        const pointLight = new PointLight(0xFFFFFF);
+        scene.add(pointLight);
+
         // put renderer in site
         const container = document.createElement('div');
         container.setAttribute("id", `${divId}`);
         container.appendChild(this.renderer.domElement);
-        document.append(container);
+        document.body.append(container);
 
         // assign properties for layer access.
         this.objects = [];
@@ -71,6 +75,6 @@ export class Context {
 
 export interface Renderable {
     getId(): string;
-    getBody(): Mesh;
+    getBody(): Object3D;
     onupdate(deltat:number): void
 }

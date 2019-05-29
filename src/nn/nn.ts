@@ -52,7 +52,7 @@ export class Net {
         // 2. Backwards pass
         L = L - 1;
         y[-1] = input;
-        dEdY[L] = outputReal.min(y[L]);
+        dEdY[L] = outputReal.min( y[L] );
         for(let l = L; l >= 0; l--) {
             let layer = this.layers[l];
             dEdX[l] = dEdY[l].min( layer.gradient(x[l]) );

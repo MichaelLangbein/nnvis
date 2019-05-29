@@ -14,6 +14,24 @@ export function createDataset(N: number): Entry[] {
     return out;
 }
 
+// export function normalizeDataset(data: Entry[]): Entry[] {
+    
+//     let inputMinima = new Array(data[0].input.length);
+//     let outputMinima = new Array(data[0].output.length);
+//     let inputMaxima = new Array(data[0].input.length);
+//     let outputMaxima = new Array(data[0].output.length);
+
+//     // first pass: finding maxima and minima
+//     for(let entry of data) {
+        
+//     }
+
+//     // second pass: normalizing
+//     for(let entry of data) {
+//         entry.input
+//     }
+// }
+
 
 function createEntry(): Entry {
     let input = new Vector([

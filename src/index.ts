@@ -1,6 +1,11 @@
 import { Net } from "./nn/nn";
 import { createDataset } from "./nn/data";
 import { Vector, Matrix } from "./nn/linalg";
+import { Context } from "./graphics/context";
+import { Grid } from "./graphics/graph";
+
+
+
 
 
 function training(net: Net, batches: number, batchsize: number): number[][] {
@@ -47,6 +52,7 @@ const net = new Net([2, 3, 1]);
 let batches = 70;
 let batchsize = 30;
 let errors = training(net, batches, batchsize);
+console.log(errors.map(error => `${error[1]}`).join("\n"))
 
 let testingdata = createDataset(3);
 for(let entry of testingdata) {
@@ -58,7 +64,10 @@ for(let entry of testingdata) {
 
 
 
-
+const context = new Context("container");
+const grid = new Grid(10, 20);
+context.addObject(grid);
+context.render();
 
 
 
