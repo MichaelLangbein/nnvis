@@ -24,16 +24,16 @@ export class Grid implements Renderable {
 
         this.graph = new Graph( this.flatArray(nodes), edges );
 
-        let geometry = new BufferGeometry();        
+        let geometry = new BufferGeometry();
         let positions: number[] = []
         let indexPairs: number[] = [];
         let i = 0;
         for(let edge of this.graph.edges){
             let node1 = edge.node1; 
             let node2 = edge.node2;
-            positions.concat(node1.position);
-            positions.concat(node2.position);
-            indexPairs.concat([i, i+1]);
+            positions = positions.concat(node1.position);
+            positions = positions.concat(node2.position);
+            indexPairs = indexPairs.concat([i, i+1]);
             i += 2;
         }
         let positionAttribute = new Float32BufferAttribute(positions, 3);
@@ -59,7 +59,7 @@ export class Grid implements Renderable {
     private flatArray(nestedArray: any[][]): any[] {
         let out: any[] = [];
         for(let subArr of nestedArray) {
-            out.concat(subArr);
+            out = out.concat(subArr);
         }
         return out;
     }

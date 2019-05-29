@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer, PerspectiveCamera, Vector3, AxesHelper, Mesh, BoxGeometry, MeshBasicMaterial, TextureLoader, DoubleSide, Raycaster, Vector2, Object3D, PointLight } from "three";
+import { Scene, Camera, WebGLRenderer, PerspectiveCamera, Vector3, AxesHelper, Mesh, BoxGeometry, MeshBasicMaterial, TextureLoader, DoubleSide, Raycaster, Vector2, Object3D, PointLight, AmbientLight } from "three";
 const OrbitControls = require('three-orbitcontrols');
 
 export class Context {
@@ -24,7 +24,7 @@ export class Context {
 
         // create camera
         const camera = new PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
-        camera.position.set(0, 0, -100);
+        camera.position.set(-100, 20, -100);
         camera.up = new Vector3(0, 1, 0);
         scene.add(camera);
 
@@ -37,8 +37,8 @@ export class Context {
         this.controls.update();
 
         // create lightsource
-        const pointLight = new PointLight(0xFFFFFF);
-        scene.add(pointLight);
+        const light = new AmbientLight(0xFFFFFF);
+        scene.add(light);
 
         // put renderer in site
         const container = document.createElement('div');

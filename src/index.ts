@@ -3,6 +3,7 @@ import { createDataset } from "./nn/data";
 import { Vector, Matrix } from "./nn/linalg";
 import { Context } from "./graphics/context";
 import { Grid } from "./graphics/graph";
+import { Mesh, Sphere, MeshLambertMaterial, SphereGeometry } from "three";
 
 
 
@@ -67,6 +68,10 @@ for(let entry of testingdata) {
 const context = new Context("container");
 const grid = new Grid(10, 20);
 context.addObject(grid);
+// context.scene.add(new Mesh(
+//     new SphereGeometry(),
+//     new MeshLambertMaterial()
+// ));
 context.render();
 
 
