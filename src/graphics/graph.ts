@@ -8,9 +8,9 @@ export class Grid implements Renderable {
     readonly graph: Graph;
     readonly body: Object3D;
 
-    constructor(nrows: number, ncols: number) {
+    constructor(id: string, nrows: number, ncols: number) {
 
-        this.id = `graph_${nrows}_${ncols}_${Math.random() * 1000}`;
+        this.id = id;
         let nodes: Node[][] = Array(nrows).fill(0).map(x => Array(ncols).fill(undefined));  // new Array(nrows).fill( new Array(ncols) );
         let edges: Edge[] = [];
         
@@ -46,8 +46,7 @@ export class Grid implements Renderable {
         return this.body;
     }
     
-    onupdate(deltat: number): void {
-        console.log("updating ...")
+    onupdate(deltat: number): void { 
         this.graph.apply(wiggle);
         // @ts-ignore
         this.body.geometry.verticesNeedUpdate = true;

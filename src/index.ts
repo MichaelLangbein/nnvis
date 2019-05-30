@@ -66,7 +66,7 @@ function training(net: Net, batches: number, batchsize: number): number[][] {
 
 
 const context = new Context("container");
-const grid = new Grid(10, 20);
+const grid = new Grid("baseGrid", 10, 20);
 context.addObject(grid);
 // context.scene.add(new Mesh(
 //     new SphereGeometry(),

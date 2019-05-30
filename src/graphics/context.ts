@@ -1,4 +1,5 @@
 import { Scene, Camera, WebGLRenderer, PerspectiveCamera, Vector3, AxesHelper, Mesh, BoxGeometry, MeshBasicMaterial, TextureLoader, DoubleSide, Raycaster, Vector2, Object3D, PointLight, AmbientLight } from "three";
+import { isArray } from "util";
 const OrbitControls = require('three-orbitcontrols');
 
 export class Context {
@@ -54,7 +55,8 @@ export class Context {
 
     addObject(object: Renderable) {
         this.objects.push(object);
-        this.scene.add(object.getBody());
+        let body = object.getBody();
+        this.scene.add(body);
     }
 
     render() {
