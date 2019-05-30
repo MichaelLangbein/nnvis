@@ -1,5 +1,5 @@
 import { Renderable } from "./context";
-import { Mesh, LineSegments, LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D } from "three";
+import { Mesh, LineSegments, LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Int16BufferAttribute, Uint16BufferAttribute, Geometry, Vector3 } from "three";
 
 
 export class Grid implements Renderable {
@@ -11,7 +11,7 @@ export class Grid implements Renderable {
     constructor(nrows: number, ncols: number) {
 
         this.id = `graph_${nrows}_${ncols}_${Math.random() * 1000}`;
-        let nodes: Node[][] = new Array(nrows).fill( new Array(ncols) );
+        let nodes: Node[][] = Array(nrows).fill(0).map(x => Array(ncols).fill(undefined));  // new Array(nrows).fill( new Array(ncols) );
         let edges: Edge[] = [];
         
         for(let row = 0; row < nrows; row++) {
@@ -24,22 +24,15 @@ export class Grid implements Renderable {
 
         this.graph = new Graph( this.flatArray(nodes), edges );
 
-        let geometry = new BufferGeometry();
-        let positions: number[] = []
-        let indexPairs: number[] = [];
-        let i = 0;
-        for(let edge of this.graph.edges){
-            let node1 = edge.node1; 
-            let node2 = edge.node2;
-            positions = positions.concat(node1.position);
-            positions = positions.concat(node2.position);
-            indexPairs = indexPairs.concat([i, i+1]);
-            i += 2;
+        let vertexPairs = new Geometry();
+        for (let node of this.graph.nodes) {
+            for (let targetNode of this.graph.getTargets(node)) {
+                vertexPairs.vertices.push(new Vector3(... node.position));
+                vertexPairs.vertices.push(new Vector3(... targetNode.position));
+            }
         }
-        let positionAttribute = new Float32BufferAttribute(positions, 3);
-        geometry.addAttribute("position", positionAttribute);
-        geometry.setIndex(indexPairs);
-        let lines = new LineSegments(geometry, new LineBasicMaterial());
+        let material = new LineBasicMaterial( { color: 0xffffff } );
+        let lines = new LineSegments( vertexPairs,  material );
 
         this.body = lines;
     }
@@ -79,6 +72,12 @@ export class Graph {
         return this.nodes.find(node => node.id == id);
     }
 
+    getNodeIndex(node: Node): number | undefined {
+        for(let i = 0; i < this.nodes.length; i++) {
+            if(node.id == this.nodes[i].id) return i;
+        }
+    }
+
     getNeighbours(node: Node): Node[] {
         let sources = this.getSources(node);
         let targets = this.getTargets(node);
@@ -115,6 +114,9 @@ export class Edge {
     node1: Node;
     node2: Node;
     constructor(node1: Node, node2: Node) {
+        if(node1.id == node2.id){
+            console.log("ho!")
+        }
         this.node1 = node1;
         this.node2 = node2;
     }

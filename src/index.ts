@@ -49,18 +49,18 @@ function training(net: Net, batches: number, batchsize: number): number[][] {
 
 
 
-const net = new Net([2, 3, 1]);
-let batches = 70;
-let batchsize = 30;
-let errors = training(net, batches, batchsize);
-console.log(errors.map(error => `${error[1]}`).join("\n"))
+// const net = new Net([2, 3, 1]);
+// let batches = 70;
+// let batchsize = 30;
+// let errors = training(net, batches, batchsize);
+// console.log(errors.map(error => `${error[1]}`).join("\n"))
 
-let testingdata = createDataset(3);
-for(let entry of testingdata) {
-    let output = net.execute(entry.input);
-    let error = entry.output.min(output);
-    console.log(` --- validation ---\n     predicted: ${output}\n     correct: ${entry.output}\n     error: ${error}\n    `);
-}
+// let testingdata = createDataset(3);
+// for(let entry of testingdata) {
+//     let output = net.execute(entry.input);
+//     let error = entry.output.min(output);
+//     console.log(` --- validation ---\n     predicted: ${output}\n     correct: ${entry.output}\n     error: ${error}\n    `);
+// }
 
 
 
@@ -73,8 +73,3 @@ context.addObject(grid);
 //     new MeshLambertMaterial()
 // ));
 context.render();
-
-
-
-
-
