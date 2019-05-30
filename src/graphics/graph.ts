@@ -1,5 +1,5 @@
 import { Renderable } from "./context";
-import { Mesh, LineSegments, LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Int16BufferAttribute, Uint16BufferAttribute, Geometry, Vector3 } from "three";
+import { Mesh, LineSegments, LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Int16BufferAttribute, Uint16BufferAttribute, Geometry, Vector3, Line } from "three";
 
 
 export class Grid implements Renderable {
@@ -27,10 +27,11 @@ export class Grid implements Renderable {
         let vertexPairs = new Geometry();
         for (let node of this.graph.nodes) {
             for (let targetNode of this.graph.getTargets(node)) {
-                vertexPairs.vertices.push(new Vector3(... node.position));
-                vertexPairs.vertices.push(new Vector3(... targetNode.position));
+                vertexPairs.vertices.push(node.position);
+                vertexPairs.vertices.push(targetNode.position);
             }
         }
+        vertexPairs.verticesNeedUpdate = true;
         let material = new LineBasicMaterial( { color: 0xffffff } );
         let lines = new LineSegments( vertexPairs,  material );
 
@@ -46,7 +47,10 @@ export class Grid implements Renderable {
     }
     
     onupdate(deltat: number): void {
-        
+        console.log("updating ...")
+        this.graph.apply(wiggle);
+        // @ts-ignore
+        this.body.geometry.verticesNeedUpdate = true;
     }
 
     private flatArray(nestedArray: any[][]): any[] {
@@ -58,6 +62,12 @@ export class Grid implements Renderable {
     }
 }
 
+function wiggle(node: Node): Node {
+    let x,y,z = (Math.random() - 0.5) * 10;
+    node.position.add(new Vector3(x, y, z));
+    return node;
+}
+
 
 export class Graph {
     nodes: Node[];
@@ -66,6 +76,10 @@ export class Graph {
     constructor(nodes: Node[], edges: Edge[]){
         this.nodes = nodes;
         this.edges = edges;
+    }
+
+    apply(func: (a: Node) => Node) {
+        this.nodes.map(node => func(node));
     }
 
     getNode(id: string): Node | undefined {
@@ -101,10 +115,10 @@ export class Graph {
 
 export class Node {
     id: string;
-    position: number[];
+    position: Vector3;
     value: number;
     constructor(x: number, y: number, z: number, v: number, id: string){
-        this.position = [x, y, z];
+        this.position = new Vector3(x, y, z);
         this.value = v;
         this.id = id;
     }
