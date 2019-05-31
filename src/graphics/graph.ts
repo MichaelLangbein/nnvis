@@ -6,7 +6,7 @@ export class Grid implements Renderable {
 
     readonly id: string;
     readonly graph: Graph;
-    readonly body: Object3D;
+    readonly body: LineSegments;
 
     constructor(id: string, nrows: number, ncols: number) {
 
@@ -47,9 +47,9 @@ export class Grid implements Renderable {
     }
     
     onupdate(deltat: number): void { 
-        this.graph.apply(wiggle);
+        //this.graph.apply(wiggle);
         // @ts-ignore
-        this.body.geometry.verticesNeedUpdate = true;
+        //this.body.geometry.verticesNeedUpdate = true;
     }
 
     private flatArray(nestedArray: any[][]): any[] {
@@ -61,11 +61,6 @@ export class Grid implements Renderable {
     }
 }
 
-function wiggle(node: Node): Node {
-    let x,y,z = (Math.random() - 0.5) * 10;
-    node.position.add(new Vector3(x, y, z));
-    return node;
-}
 
 
 export class Graph {

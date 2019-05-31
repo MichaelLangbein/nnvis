@@ -1,6 +1,9 @@
 import { Renderable } from "./context";
 import { Node } from "./graph";
-import { Object3D, Mesh, Points, PointsMaterial, Geometry, Vector3 } from "three";
+import { Object3D, Mesh, Points, PointsMaterial, Geometry, Vector3, Color, VertexColors } from "three";
+
+
+
 
 export class Cloud implements Renderable {
 
@@ -16,8 +19,9 @@ export class Cloud implements Renderable {
         let geometry = new Geometry();
         for(let node of nodes) {
             geometry.vertices.push(node.position);
+            geometry.colors.push(new Color(this.valueToColor(node.value)));
         }
-        let material = new PointsMaterial({ color: 0xFFFFFF, size: 0.25 });
+        let material = new PointsMaterial({ size: 5.25, vertexColors: VertexColors });
         let body = new Points(geometry, material);
         this.body = body;
 
@@ -37,7 +41,14 @@ export class Cloud implements Renderable {
 
     apply(func: (n: Node) => Node): void {
         this.nodes.map(node => func(node));
-        this.body.
+        // @ts-ignore
+        this.body.geometry.verticesNeedUpdate = true;
+        // @ts-ignore
+        this.body.geometry.colorsNeedUpdate = true;
+    }
+
+    private valueToColor(val: number): string {
+        return `hsl(${val*100}, 100%, 50%)`;
     }
 }
 

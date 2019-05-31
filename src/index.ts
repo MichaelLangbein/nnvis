@@ -2,8 +2,9 @@ import { Net } from "./nn/nn";
 import { createDataset } from "./nn/data";
 import { Vector, Matrix } from "./nn/linalg";
 import { Context } from "./graphics/context";
-import { Grid } from "./graphics/graph";
+import { Grid, Node } from "./graphics/graph";
 import { Mesh, Sphere, MeshLambertMaterial, SphereGeometry } from "three";
+import { Cloud } from "./graphics/cloud";
 
 
 
@@ -65,11 +66,13 @@ function training(net: Net, batches: number, batchsize: number): number[][] {
 
 
 
-const context = new Context("container");
+const context = new Context("layer1Container");
+
+const nodes = Array(20).fill(0).map((v, i) => new Node(Math.random()*100, Math.random()*100, Math.random()*100, Math.random(), `node_${i}`));
+const cloud = new Cloud("pointCloud", nodes);
+context.addObject(cloud);
+
 const grid = new Grid("baseGrid", 10, 20);
 context.addObject(grid);
-// context.scene.add(new Mesh(
-//     new SphereGeometry(),
-//     new MeshLambertMaterial()
-// ));
+
 context.render();
