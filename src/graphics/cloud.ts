@@ -39,8 +39,8 @@ export class Cloud implements Renderable {
         
     }
 
-    apply(func: (n: Node) => Node): void {
-        this.nodes.map(node => func(node));
+    apply(func: (n: Node, i: number) => Node): void {
+        this.nodes.map((node, i) => func(node, i));
         // @ts-ignore
         this.body.geometry.verticesNeedUpdate = true;
         // @ts-ignore
@@ -48,12 +48,21 @@ export class Cloud implements Renderable {
     }
 
     private valueToColor(val: number): string {
-        return `hsl(${val*100}, 100%, 50%)`;
+        return perc2color(val);
     }
 }
 
-function wiggle(node: Node): Node {
-    let x,y,z = (Math.random() - 0.5) * 10;
-    node.position.add(new Vector3(x, y, z));
-    return node;
+
+function perc2color(perc: number): string {
+	var r, g, b = 0;
+	if(perc < 50) {
+		r = 255;
+		g = Math.round(5.1 * perc);
+	}
+	else {
+		g = 255;
+		r = Math.round(510 - 5.10 * perc);
+	}
+	var h = r * 0x10000 + g * 0x100 + b * 0x1;
+	return '#' + ('000000' + h.toString(16)).slice(-6);
 }

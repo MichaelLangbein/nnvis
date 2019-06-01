@@ -42,10 +42,12 @@ export class Context {
         scene.add(light);
 
         // put renderer in site
-        const container = document.createElement('div');
-        container.setAttribute("id", `${divId}`);
-        container.appendChild(this.renderer.domElement);
-        document.body.append(container);
+        // const container = document.createElement('div');
+        // container.setAttribute("id", `${divId}`);
+        // document.body.append(container);
+        const container = document.getElementById(divId);
+        if(container) container.appendChild(this.renderer.domElement);
+        else throw new Error(`No such element: #${divId}`);
 
         // assign properties for layer access.
         this.objects = [];

@@ -14,7 +14,7 @@ export class Net {
         for(let i = 1; i < sizes.length; i++) {
             const prevSize = sizes[i-1];
             const thisSize = sizes[i];
-            this.layers.push(new Layer(prevSize, thisSize));
+            this.layers.push(new Layer(`layer_${i}_${prevSize}x${thisSize}`, prevSize, thisSize));
         }
     }
 
@@ -84,10 +84,12 @@ interface Layeroutput {
 
 class Layer {
 
+    readonly id: string;
     public weights: Matrix;
     private neuron: Neuron;
 
-    constructor(sizeInput: number, sizeLayer: number) {
+    constructor(id: string, sizeInput: number, sizeLayer: number) {
+        this.id = id;
         this.neuron = new Neuron();
         this.weights = randomMatrix(sizeLayer, sizeInput);
     }

@@ -1,66 +1,4 @@
-import { Renderable } from "./context";
-import { Mesh, LineSegments, LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Int16BufferAttribute, Uint16BufferAttribute, Geometry, Vector3, Line } from "three";
-
-
-export class Grid implements Renderable {
-
-    readonly id: string;
-    readonly graph: Graph;
-    readonly body: LineSegments;
-
-    constructor(id: string, nrows: number, ncols: number) {
-
-        this.id = id;
-        let nodes: Node[][] = Array(nrows).fill(0).map(x => Array(ncols).fill(undefined));  // new Array(nrows).fill( new Array(ncols) );
-        let edges: Edge[] = [];
-        
-        for(let row = 0; row < nrows; row++) {
-            for(let col = 0; col < ncols; col++) {
-                nodes[row][col] = new Node(20 * col, 20 * row, 0, 1, `node_${row}_${col}`);
-                if(row >= 1) edges.push( new Edge(nodes[row-1][col], nodes[row][col]) );
-                if(col >= 1) edges.push( new Edge(nodes[row][col-1], nodes[row][col]) );
-            }
-        }
-
-        this.graph = new Graph( this.flatArray(nodes), edges );
-
-        let vertexPairs = new Geometry();
-        for (let node of this.graph.nodes) {
-            for (let targetNode of this.graph.getTargets(node)) {
-                vertexPairs.vertices.push(node.position);
-                vertexPairs.vertices.push(targetNode.position);
-            }
-        }
-        vertexPairs.verticesNeedUpdate = true;
-        let material = new LineBasicMaterial( { color: 0xffffff } );
-        let lines = new LineSegments( vertexPairs,  material );
-
-        this.body = lines;
-    }
-
-    getId(): string {
-        return this.id;
-    }
-
-    getBody(): Object3D {
-        return this.body;
-    }
-    
-    onupdate(deltat: number): void { 
-        //this.graph.apply(wiggle);
-        // @ts-ignore
-        //this.body.geometry.verticesNeedUpdate = true;
-    }
-
-    private flatArray(nestedArray: any[][]): any[] {
-        let out: any[] = [];
-        for(let subArr of nestedArray) {
-            out = out.concat(subArr);
-        }
-        return out;
-    }
-}
-
+import { Vector3 } from "three";
 
 
 export class Graph {
@@ -128,4 +66,29 @@ export class Edge {
         this.node1 = node1;
         this.node2 = node2;
     }
+}
+
+
+export class TwoDGrid  extends Graph {
+
+    constructor(nrows: number, ncols: number) {
+        let nodes: Node[][] = Array(nrows).fill(0).map(x => Array(ncols).fill(undefined));
+        let edges: Edge[] = [];
+        
+        for(let row = 0; row < nrows; row++) {
+            for(let col = 0; col < ncols; col++) {
+                nodes[row][col] = new Node(20 * col, 20 * row, 0, 1, `node_${row}_${col}`);
+                if(row >= 1) edges.push( new Edge(nodes[row-1][col], nodes[row][col]) );
+                if(col >= 1) edges.push( new Edge(nodes[row][col-1], nodes[row][col]) );
+            }
+        }
+
+        let flatNodes: Node[] = [];
+        for(let subArr of nodes) {
+            flatNodes = flatNodes.concat(subArr);
+        }
+
+        super(flatNodes, edges);
+    }
+
 }
